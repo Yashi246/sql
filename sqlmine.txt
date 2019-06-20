@@ -1,0 +1,411 @@
+select * from tab;  //list of tables
+select * from departments; //selects all rows of department table
+select department_id, department_name from departments; //id and name of the employee
+desc employees;
+create table Account
+(
+aid number(8) primary key,
+mobileno number(10) unique not null,
+accountholder varchar2(30) not null,
+balance number(8,2) check(balance>=1000.00)
+);
+insert into account values(100,9999999999,'king',24000.00);
+savepoint a; //savepoint crreated
+insert into account values(101,9999999994,'Raja',50000.00);
+insert into account values(102,9999999222,'Ram',33000.00);
+insert into account values(101,9999999994,'Raja',50000.00);
+savpoint b; //done only in insert
+update account set balance=30000,accountholder='King Khan' where aid=100;
+delete from account;
+rollback to b; //goes back to the point of the savepoint b;
+commit; //permanently saves the record // cant rollback from the commit
+SQL> create table Account
+  2  (
+  3  aid number(8) primary key,
+  4  mobileno number(10) unique not null,
+  5  accountholder varchar2(30) not null,
+  6  balance number(8,2) check(balance>=1000.00)
+  7  );
+
+Table created.
+
+SQL> insert into account values(100,9999999999,'King',24000.00);
+
+1 row created.
+
+SQL> savepoint created.
+  2
+SQL> Savepoint A;
+
+Savepoint created.
+
+SQL> insert into account values(101,9999999994,'Raja',50000.00);
+
+1 row created.
+
+SQL> insert into account values(102,9999999222,'Ram',33000.00);
+
+1 row created.
+
+SQL> savepoint b;
+
+Savepoint created.
+
+SQL> update account set balance=30000,accountholder='King Khan' where
+
+1 row updated.
+
+SQL> select * from account;
+
+       AID   MOBILENO ACCOUNTHOLDER                     BALANCE
+---------- ---------- ------------------------------ ----------
+       100 9999999999 King Khan                           30000
+       101 9999999994 Raja                                50000
+       102 9999999222 Ram                                 33000
+
+SQL> delete from account;
+
+3 rows deleted.
+
+SQL> rollback to b;
+
+Rollback complete.
+
+SQL> select * from account;
+
+       AID   MOBILENO ACCOUNTHOLDER                     BALANCE
+---------- ---------- ------------------------------ ----------
+       100 9999999999 King                                24000
+       101 9999999994 Raja                                50000
+       102 9999999222 Ram                                 33000
+
+SQL> commit;
+
+Commit complete.
+
+SQL> rollback;
+
+Rollback complete.
+
+SQL> select * from account;
+
+       AID   MOBILENO ACCOUNTHOLDER                     BALANCE
+---------- ---------- ------------------------------ ----------
+       100 9999999999 King                                24000
+       101 9999999994 Raja                                50000
+       102 9999999222 Ram                                 33000
+
+SQL> insert into account values(101,9999999994,'Raja',50000.00);
+insert into account values(101,9999999994,'Raja',50000.00)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (HR.SYS_C007308) violated
+
+
+SQL> insert into account values(null,9999999994,'Raja',50000.00);
+insert into account values(null,9999999994,'Raja',50000.00)
+                           *
+ERROR at line 1:
+ORA-01400: cannot insert NULL into ("HR"."ACCOUNT"."AID")
+
+
+SQL> insert into account values(103,9999999994,'Raja',50000.00);
+insert into account values(103,9999999994,'Raja',50000.00)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (HR.SYS_C007309) violated
+
+
+SQL> insert into account values(103,9999999993,'Raja',500.00);
+insert into account values(103,9999999993,'Raja',500.00)
+*
+ERROR at line 1:
+ORA-02290: check constraint (HR.SYS_C007307) violated
+select last_name, salary,commission_pct, hire_date, job_id, department_id from employees where department_id =50 and jo_id='ST_MAN';
+
+select last_name, salary,commission_pct, hire_date, job_id, department_id from employees where department_id =50 or jo_id like '%_MAN';
+select last_name, salary,commission_pct, hire_date, job_id, department_id from employees where job_id in ('ST_MAN', 'SA_MAN','PU_MAN');
+select last_name, salary,commission_pct, hire_date, job_id, department_id from employees where salary between 10000.00 and 20000.00 order by job_id, salary;
+
+//not between for other
+//for rr format 95 is 1995
+//for yy format 95 is 2095
+select last_name, salary,commission_pct, hire_date, job_id, department_id from employees where hire_date between '01-jan-05' and '31-dec-08';
+
+select last_name, upper(last_name), lower(last_name) from employees; //same row in three different ways
+
+LAST_NAME                 UPPER(LAST_NAME)          LOWER(LAST_NAME)
+------------------------- ------------------------- -------------------------
+Urman                     URMAN                     urman
+Vargas                    VARGAS                    vargas
+Vishney                   VISHNEY                   vishney
+Vollman                   VOLLMAN                   vollman
+Walsh                     WALSH                     walsh
+Weiss                     WEISS                     weiss
+Whalen                    WHALEN                    whalen
+Zlotkey                   ZLOTKEY                   zlotkey
+--------------------------------------------------------------------------------
+select sum(salary) from employees;
+
+SQL> select sum(salary) from employees;
+
+SUM(SALARY)
+-----------
+     691416
+----------------------------------------------------------------------------------
+select sum(salary) totalsalary,
+max(salary) as maxsalary,
+min(salary) as minsalary,
+count(salary) as "total count",
+avg(salary) as AverageSalary from employees;
+
+
+
+SQL> select sum(salary) totalsalary,
+  2  max(salary) as maxsalary,
+  3  min(salary) as minsalary,
+  4  count(salary) as "total count", //space is allowed in double qoutations
+  5  avg(salary) as AverageSalary from employees;
+
+TOTALSALARY  MAXSALARY  MINSALARY total count AVERAGESALARY
+----------- ---------- ---------- ----------- -------------
+     691416      24000       2100         107    6461.83178
+
+
+-----------------------------------------------------------------------------------
+select count(*) as totalcount from employees;   //star indicates entire record
+
+TOTALCOUNT
+----------
+       107
+-----------------------------------------------------------------------------------
+select avg(commission_pct) as totalcount,
+count(commission_pct) from employees;
+TOTALCOUNT COUNT(COMMISSION_PCT)
+---------- ---------------------
+.222857143                    35      //it should be 107.. it is less cause all group by functions exclude no values
+-----------------------------------------------------------------------------------------------------------------------------
+select avg(nvl(commission_pct,0)) as totalcount, //replaces null with 0
+count(nvl(commission_pct, 0)) 
+from employees;
+TOTALCOUNT COUNT(NVL(COMMISSION_PCT,0))
+---------- ----------------------------
+.072897196                          107
+
+select avg(salary) totalsalary,
+count(salary) as countsalary
+from employees group by department_id;
+
+TOTALSALARY COUNTSALARY
+----------- -----------
+ 8601.33333           6
+       4150           6#
+       7000           1
+ 19333.3333           3
+       9500           2
+      10000           1
+      10154           2                                               #GROUP FUNCTIONS IGNORES NULL     #GROUP BY CLAUSE DOESNT IFGNORE NULL GROUPS
+ 3475.55556          45
+ 8955.88235          34
+       6500           1
+       5760           5
+
+TOTALSALARY COUNTSALARY
+----------- -----------
+       4400           1
+-------------------------------------------------------------------------------------------------------------------------
+select department_id,avg(salary) totalsalary,
+count(salary) as countsalary
+from employees group by department_id;
+
+DEPARTMENT_ID TOTALSALARY COUNTSALARY
+------------- ----------- -----------
+          100  8601.33333           6
+           30        4150           6
+                     7000           1     //group by doesnt ignore null
+           90  19333.3333           3
+           20        9500           2
+           70       10000           1
+          110       10154           2
+           50  3475.55556          45
+           80  8955.88235          34
+           40        6500           1
+           60        5760           5
+
+DEPARTMENT_ID TOTALSALARY COUNTSALARY
+------------- ----------- -----------
+           10        4400           1
+-------------------------------------------------------------------------------------------------
+select department_id, job_id,avg(salary) totalsalary,
+count(salary) as countsalary
+from employees group by department_id, job_id;
+DEPARTMENT_ID JOB_ID     TOTALSALARY COUNTSALARY
+------------- ---------- ----------- -----------
+           50 SH_CLERK          3215          20
+           20 MK_MAN           13000           1
+          100 FI_ACCOUNT        7920           5
+              SA_REP            7000           1                //job_id has been added
+           70 PR_REP           10000           1
+           30 PU_MAN           11000           1
+           10 AD_ASST           4400           1
+           20 MK_REP            6000           1
+           40 HR_REP            6500           1
+--------------------------------------------------------------------------------------------------------
+select department_id, job_id,avg(salary) totalsalary,
+count(salary) as countsalary                                      //order by
+from employees group by department_id, job_id
+order by department_id, job_id;
+
+DEPARTMENT_ID JOB_ID     TOTALSALARY COUNTSALARY
+------------- ---------- ----------- -----------
+           80 SA_MAN           12200           5
+           80 SA_REP      8396.55172          29
+           90 AD_PRES          24000           1
+           90 AD_VP            17000           2
+          100 FI_ACCOUNT        7920           5
+          100 FI_MGR           12008           1
+          110 AC_ACCOUNT        8300           1
+          110 AC_MGR           12008           1
+              SA_REP            7000           1
+
+--------------------------------------------------------------------------------
+
+select department_id, job_id,avg(salary) totalsalary,
+count(salary) as countsalary                                      //order by
+from employees
+ where sum(salary) >=50000
+group by department_id, job_id
+
+ERROR at line 2:
+ORA-00923: FROM keyword not found where expected                //cant use where with group by
+
+--------------------------------------------------------------------------------------------------------
+select department_id, job_id,avg(salary) totalsalary,
+count(salary) as countsalary                                      
+from employees                                                      //having
+ having sum(salary)>=50000  
+group by department_id, job_is;
+                                   
+DEPARTMENT_ID JOB_ID     TOTALSALARY COUNTSALARY
+------------- ---------- ----------- -----------
+           50 ST_CLERK          2785          20
+           80 SA_REP      8396.55172          29
+           80 SA_MAN           12200           5
+           50 SH_CLERK          3215          20   
+
+-------------------------------------------------------------------------------------------------------------
+select count( distinct department_id) from employees;
+                                                                   //distinct =ignore repeated value
+
+COUNT(DISTINCTDEPARTMENT_ID)
+----------------------------
+                          11
+
+
+-----------------------------------------------------------------------------------------------------------------
+
+
+-----
+joins
+-----
+select employees.employee_id,
+      employees.last_name,
+      employees.department_id,
+      departments.department_id,                                      //this product is called cartesian product
+	departments.department_name                                   //cross join
+from employees,departments;
+
+
+select employees.employee_id,
+      employees.last_name,
+      employees.department_id,
+      departments.department_id,                                      
+	departments.department_name                                   
+from employees cross join departments;      
+
+select employees.employee_id,
+      employees.last_name,
+      employees.department_id,                               //matched record
+      departments.department_id,                                      //equijoin
+	departments.department_name                                   //inner join=> matched records
+from employees cross join departments
+where employees.department_id = departments.department_id; 
+
+
+     
+select employees.employee_id,
+      employees.last_name,
+      employees.department_id,					//on keyword
+      departments.department_id,                                      //join keyword
+	departments.department_name                                   
+from employees  join departments
+on employees.department_id = departments.department_id;
+
+
+select e.employee_id,
+      e.last_name,						
+      e.department_id,
+      d.department_id,                                      //alliase for the departemnt name
+	d.department_name                                   
+from employees e cross join departments d
+where e.department_id = d.department_id;
+
+
+desc employees;
+desc departments;
+ equi-joins=> natural join
+==>performs join on common coloumns between tables
+---> common in -> same column name, same data types, same size
+
+
+select * from employees natural join departments;	//no other coloumn is being repeated //perfect equi join
+							//common coloumns are displayed only once
+							//e.department_id=d.department_id and e.manager_id=d.manager_id
+
+--------------------------------------------------------------------------------------------------------------
+outer join----> matched and unmatched 
+types left, right and full //has to be performed with equi join conditon
+--------------------------------------------------------------------------------------------------------------
+select * from employees join department using (department_id);
+
+select  e.employee_id,
+    e.last_name,
+	e.department_id,
+d.department_id,				//right and left join
+d.department_name
+from employees e right outer join departments d
+on e.employee_id=d.department_id;
+
+
+select  e.employee_id,
+    e.last_name,
+	e.department_id,
+d.department_id,
+d.department_name
+from employees e full outer join departments d	//full outer join
+on e.employee_id=d.department_id;
+
+-----------------------------------------------------------------------------------------------------------
+self join
+-------------------------------------------------------------------------------------------------------------
+select e.employee_id, e.last_name,
+m.manager_id, m.last_name, m.employee_id
+from employees e inner join employees m
+on e.employee_id=m.manager_id;
+
+select e.employee_id, e.last_name,
+m.manager_id, m.last_name, m.employee_id
+from employees e inner join employees m
+on e.manager_id=m.employee_id;
+
+---------------------------------------------------------------------------------------------------------
+non equi join
+--------------------------------------------------------------------------------------------------------
+select e.employee_id, e.last_name, e.hire_date,
+	m.manager_id, m.last_name, m.employee_id, m.hire_date
+from 	employees e inner join employees m
+on 	e.manager_id=m.employee_id 
+and 	e.hire_date<m.hire_date;
+
+
+
